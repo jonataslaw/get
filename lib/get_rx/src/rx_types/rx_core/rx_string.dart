@@ -286,4 +286,13 @@ class RxnString extends Rx<String?> implements Comparable<String>, Pattern {
   int compareTo(String other) {
     return value!.compareTo(other);
   }
+
+  String? call([String? v]) {
+    if (v == null) {
+      value = null;
+      return value;
+    } else {
+      return super.call(v);
+    }
+  }
 }
