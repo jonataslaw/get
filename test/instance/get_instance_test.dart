@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
+
 import 'util/matcher.dart' as m;
 
 class Mock {
@@ -154,6 +155,44 @@ void main() {
       expect(instance, Get.find<DisposableController>());
       expect(instance.initialized, true);
     });
+  });
+
+  test('Get.replace test for replacing temporary parent instance with child',
+      () async {
+    Get.put(DisposableController());
+    Get.replace<DisposableController, Controller>(Controller());
+    final instance = Get.find<DisposableController>();
+    expect(instance is Controller, isTrue);
+    expect((instance as Controller).init, greaterThan(0));
+  });
+
+  test('Get.replace test for replacing permanent parent instance with child',
+      () async {
+    Get.put(DisposableController(), permanent: true);
+    Get.replace<DisposableController, Controller>(Controller());
+    final instance = Get.find<DisposableController>();
+    expect(instance is Controller, isTrue);
+    expect((instance as Controller).init, greaterThan(0));
+  });
+
+  test('Get.replace test for replacing tagged temporary instance with child',
+      () async {
+    final tag = 'tag';
+    Get.put(DisposableController(), tag: tag);
+    Get.replace<DisposableController, Controller>(Controller(), tag: tag);
+    final instance = Get.find<DisposableController>(tag: tag);
+    expect(instance is Controller, isTrue);
+    expect((instance as Controller).init, greaterThan(0));
+  });
+
+  test('Get.replace test for replacing tagged parent instance with child',
+      () async {
+    final tag = 'tag';
+    Get.put(DisposableController(), permanent: true, tag: tag);
+    Get.replace<DisposableController, Controller>(Controller(), tag: tag);
+    final instance = Get.find<DisposableController>(tag: tag);
+    expect(instance is Controller, isTrue);
+    expect((instance as Controller).init, greaterThan(0));
   });
 }
 
